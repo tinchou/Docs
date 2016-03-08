@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using FiltersSample.Filters;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +15,12 @@ namespace FiltersSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddScoped<AddHeaderAttribute>();
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(typeof(SampleGlobalActionFilter));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -22,12 +30,7 @@ namespace FiltersSample
             loggerFactory.AddConsole(minLevel: LogLevel.Verbose);
             app.UseIISPlatformHandler();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvcWithDefaultRoute();
         }
 
         // Entry point for the application.

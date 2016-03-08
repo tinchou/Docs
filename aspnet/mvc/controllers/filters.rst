@@ -28,15 +28,21 @@ Synchonous filters define both an On*Stage*Executing and On*Stage*Executed metho
 
 EXAMPLE
 
-Asynchronous filters define a single On*Stage*ExectionAsync method that will surround execution of the pipeline stage named by Stage. The On*Stage*ExectionAsync method is provided a *Stage*ExectionDelegate delegate which will execute the pipeline stage named by Stage when invoked and awaited.
+Asynchronous filters define a single On*Stage*ExecutionAsync method that will surround execution of the pipeline stage named by Stage. The On*Stage*ExecutionAsync method is provided a *Stage*ExecutionDelegate delegate which will execute the pipeline stage named by Stage when invoked and awaited.
 
 EXAMPLE
 
-In most cases, you can implement both the async and synchronous interfaces at the same time.
+In most cases, you can implement both the async and synchronous interfaces at the same time, like so:
+
+EXAMPLE
 
 Filters and Attributes
 ^^^^^^^^^^^^^^^^^^^^^^
-Most of the time, filter interfaces are applied to *Attributes*. These attributes are used to apply the filter to certain controllers or action methods.
+It's often convenient to implement filter interfaces as *Attributes*. These attributes are then used to apply the filter to certain controllers or action methods.
+
+Dependency Injection
+^^^^^^^^^^^^^^^^^^^^
+
 
 Cancellation and Short Circuiting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
