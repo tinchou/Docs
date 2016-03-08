@@ -33,7 +33,7 @@ Which filter do I need?
 
 :ref:`Exception filters <exception-filters>` are used to apply global policies to unhandled exceptions in the MVC app.
 
-:ref:`Result filters <result-filters>` wrap the execution of individual action results, but only when no exceptionshave been thrown. They are ideal for logic that must surround view execution or formatter execution.
+:ref:`Result filters <result-filters>` wrap the execution of individual action results, but only when no exceptions have been thrown. They are ideal for logic that must surround view execution or formatter execution.
 
 Implementation
 ^^^^^^^^^^^^^^
@@ -62,7 +62,7 @@ Dependency Injection
 
 Cancellation and Short Circuiting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-asdf
+
 
 
 Configuring Filters
@@ -70,8 +70,8 @@ Configuring Filters
 How, Where, Ordering, Scope Filters are not directly returned from DI You can write an attribute that has the filter interface on it or you can implement an attribute that implements IFilterFactory or you can use TypeFilter attribute or ServiceFilter attribute TypeFilter: news it up and passes params to its constructor from DI ServiceFilter: gets your filter from ServiceCollection (thus must be registered with DI) If you're using IFilterFactory, you can specify lifetime of the filter When your filter is the instance, your filter instance is cached, so don't do anything stateful. GlobalFilters are registered through MvcOptions
  
 Scope
------
-Filter can be applied per-action method (via attribute) or via controller (via attribute), or in global filters collection. Scope also generally determines ordering. The filter closest to the action runs first; generally you get overriding behavior without having to explicitly set ordering.
+^^^^^
+Filters can be applied per-action method (via attribute) or via controller (via attribute), or in global filters collection. Scope also generally determines ordering. The filter closest to the action runs first; generally you get overriding behavior without having to explicitly set ordering.
 
 .. _authorization-filters:
 
