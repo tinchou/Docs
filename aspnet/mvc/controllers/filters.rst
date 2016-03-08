@@ -22,6 +22,22 @@ Different kinds of filters run at different points within the pipeline. Some fil
 
 .. image:: filters/_static/filter-pipeline-2.png
 
+Which filter do I need?
+^^^^^^^^^^^^^^^^^^^^^^^
+
+:ref:`Authorization filters <authorization-filters>` are used to determine whether the current user is authorized for the request being made.
+
+:ref:`Resource filters <resource-filters>` are the first filter to handle a request after authorization, and the last one to touch the request as it is leaving the filter pipeline. They're especially useful to implement caching or otherwise short-circuit the pipeline for performance reasons.
+
+:ref:`Action filters <action-filters>` wrap calls to individual action method calls, and can manipulate the arguments passed into an action as well as the response returned from it.
+
+:ref:`Exception filters <exception-filters>` are used to apply global policies to unhandled exceptions in the MVC app.
+
+:ref:`Result filters <result-filters>` wrap the execution of individual action results, but only when no exceptionshave been thrown. They are ideal for logic that must surround view execution or formatter execution.
+
+Implementation
+^^^^^^^^^^^^^^
+
 All filters support both synchronous and asynchronous implementations through different interface definitions. Choose the sync or async variant depending on the kind of task you need to perform. They are interchangeable from the framework's perspective.
 
 Synchonous filters define both an On*Stage*Executing and On*Stage*Executed method (with noted exceptions). The On*Stage*Executing method will be called before the event pipeline stage by the Stage name, and the On*Stage*Executed method will be called after the pipeline stage named by the Stage name.
@@ -57,15 +73,21 @@ Scope
 -----
 Filter can be applied per-action method (via attribute) or via controller (via attribute), or in global filters collection. Scope also generally determines ordering. The filter closest to the action runs first; generally you get overriding behavior without having to explicitly set ordering.
 
+.. _authorization-filters:
+
 Authorization Filters
 ---------------------
-*Authorization Filters* control access to action methods, and are the first filters to be executed within the filter pipeline. They are covered in the :doc:`Security </security/index>` section of the documentation.
+*Authorization Filters* control access to action methods, and are the first filters to be executed within the filter pipeline. They have only a before stage, unlike most filters that support before and after methods. You should only write a custom authorization filter if you are writing your own authorization framework. Note that you should not throw exceptions within authorization filters, since nothing will handle the exception (exception filters won't handle them). Instead, issue a challenge or find another way. They are covered in the :doc:`Security </security/index>` section of the documentation.
 
 Learn more about :doc:`/security/authorization/authorization-filters`.
 
+.. _resource-filters:
+
 Resource Filters
 ----------------
-*Resource Filters* implement...
+*Resource Filters* implement either the ``IResourceFilter`` or ``IAsyncResourceFilter`` interface, and their execution wraps most of the filter pipeline (only :ref:`authorization filters` run before them).
+
+.. _action-filters:
 
 Action Filters
 --------------
@@ -77,12 +99,15 @@ The `OnActionExecuted` method runs after the action method, and can see and mani
 
 For an `IAsyncActionFilter` the `OnActionExecutionAsync` combines all the possibilites of `OnActionExecuting` and `OnActionExecuted`. A call to `await next()` on the `ActionExecutionDelegate` will execute any subsequent action filters and the action method, returning an `ActionExecutedContext`. To short-circuit inside of an `OnActionExecutionAsync`, set `ActionExecutingContext.Result` and do not call the `ActionExectionDelegate`.
 
+.. _exception-filters:
+
 Exception Filters
 -----------------
-*Exception Filters* implement...
+*Exception Filters* implement either the ``IExceptionFilter`` or ``IAsyncExceptionFilter`` interface.
 
 Exception filters handle unhandled exceptions. They are only called when an exception occurs later in the pipeline. They can provide a single location to implement common error handling policies within an app. 
 
+.. _result-filters:
 
 Result Filters
 --------------
@@ -96,7 +121,6 @@ The `OnResultExecuted` method runs after the action action, at this point if no 
 
 For an `IAsyncResultFilter` the `OnResultExecutionAsync` combines all the possibilites of `OnAResultExecuting` and `OnResultExecuted`. A call to `await next()` on the `ResultExecutionDelegate` will execute any subsequent result filters and the action result, returning a `ResultExecutedContext`. To short-circuit inside of an `OnResultExecutionAsync`, set `ResultExecutingContext.Cancel` to true and do not call the `ResultExectionDelegate`.
 
-
 Filters vs. Middleware
 ----------------------
-
+In general, filters are meant to handle cross-cutting business and application concerns. This is often the same use case for :doc:`middleware </fundamentals/middleware>`. Filters are very similar to middleware in capability, but let you scope that behavior and insert it into a location in your app where it makes sense, such as before a view, or after model binding. Filters are a part of MVC, and have access to its context and constructs. Middleware can't easily detect whether model validation on a request has generated errors, and respond accordingly, but a filter can easily do so.
