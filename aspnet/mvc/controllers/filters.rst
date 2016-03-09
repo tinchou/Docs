@@ -76,17 +76,31 @@ The result is shown below - the response headers are displayed on the bottom rig
 
 .. image:: filters/_static/add-header.png
 
+The available built-in attribute-based filters are:
+	- `ActionFilterAttribute <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/Filters/ActionFilterAttribute/index.html>`_
+	- `AuthorizationFilterAttribute <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/Filters/AuthorizationFilterAttribute/index.html>`_
+	- `ExceptionFilterAttribute <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/Filters/ExceptionFilterAttribute/index.html>`_
+	- `ResultFilterAttribute <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/Filters/ResultFilterAttribute/index.html>`_
+
 Dependency Injection
 ^^^^^^^^^^^^^^^^^^^^
-Filters are not directly returned from :doc:`dependency injection </fundamentals/dependency-injection>` (DI). Filters that are also attributes, and which are added directly to controller classes or action methods cannot have constructor dependencies provided by DI - their constructor properties must be specified when they are declared. This is a limitation of how attributes work. However, if your filters have dependencies you need to access from DI, there are several supported approaches. You can apply your filter using either the ServiceFilter or TypeFilter attribute, or you can implement IFilterFactory on your attribute, or you can access the services you require from the context parameter provided to your filter's On\ *Stage* methods.
-
-
-
+Filters are not directly returned from :doc:`dependency injection </fundamentals/dependency-injection>` (DI). Filters that are also attributes, and which are added directly to controller classes or action methods cannot have constructor dependencies provided by DI - their constructor properties must be specified when they are declared. This is a limitation of how attributes work. However, if your filters have dependencies you need to access from DI, there are several supported approaches. You can apply your filter using either the `ServiceFilter <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/ServiceFilterAttribute/index.html>`_ or `TypeFilter <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/TypeFilterAttribute/index.html>`_ attribute, or you can implement IFilterFactory on your attribute, or you can access the services you require from the context parameter provided to your filter's On\ *Stage* methods.
 
 Cancellation and Short Circuiting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+You can short-circuit the filter pipeline at any point by setting the ``Result`` property on the context parameter provided to the filter method. For instance, the following ``ShortCircuitingResourceFilter`` will prevent any other filters from running later in the pipeline, including any action filters.
 
+.. literalinclude:: filters/sample/src/FiltersSample/Filters/ShortCircuitingResourceFilter.cs
+  :language: c#
+  :emphasize-lines: 12-15
 
+When this filter is applied to an action that also would have an action filter applied, such as the ``SomeResource`` action below, the action filter is not executed (in this case the action filter is applied at the class level, but the behavior would be the same if it were applied to the method).
+
+.. literalinclude:: filters/sample/src/FiltersSample/Controllers/SampleController.cs
+  :language: c#
+  :emphasize-lines: 1,4
+  :lines: 6-8, 14-19
+  :dedent: 4 
 
 Configuring Filters
 -------------------

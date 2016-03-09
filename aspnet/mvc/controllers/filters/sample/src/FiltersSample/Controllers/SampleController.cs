@@ -10,5 +10,11 @@ namespace FiltersSample.Controllers
         {
             return Content("Examine the headers using developer tools.");
         }
+
+        [ShortCircuitingResourceFilter]
+        public IActionResult SomeResource()
+        {
+            return Content("Successful access to resource - header should be set.");
+        }
     }
 }
