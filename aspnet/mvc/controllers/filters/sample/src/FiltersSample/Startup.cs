@@ -15,11 +15,12 @@ namespace FiltersSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddScoped<AddHeaderAttribute>();
+            services.AddScoped<LoggingAddHeaderAttribute>();
 
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(typeof(SampleGlobalActionFilter));
+                options.Filters.Add(typeof(DurationActionFilter));
             });
         }
 

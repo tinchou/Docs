@@ -1,23 +1,22 @@
-﻿using FiltersSample.Helper;
+﻿using System.Threading.Tasks;
+using FiltersSample.Helper;
 using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 
 namespace FiltersSample.Filters
 {
-    public class SampleGlobalActionFilter : IActionFilter
+    public class SampleGlobalActionFilter : IActionFilter, IAsyncActionFilter
     {
-        private ILogger _logger;
-        public SampleGlobalActionFilter(ILoggerFactory loggerFactory)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger = loggerFactory.CreateLogger<SampleGlobalActionFilter>();
+            OnActionExecuting(context);
+            OnActionExecuted(await next());
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.LogWarning(nameof(OnActionExecuting) + " for " + context.ActionDescriptor.DisplayName);
             if (context.ActionDescriptor.DisplayName == "FiltersSample.Controllers.HomeController.Hello")
             {
-                _logger.LogInformation("Manipulating action arguments...");
+                // Manipulating action arguments...
                 if (!context.ActionArguments.ContainsKey("name"))
                 {
                     context.ActionArguments["name"] = "Steve";
@@ -27,13 +26,11 @@ namespace FiltersSample.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogWarning(nameof(OnActionExecuted) + " for " + context.ActionDescriptor.DisplayName);
             if (context.ActionDescriptor.DisplayName == "FiltersSample.Controllers.HomeController.Hello")
             {
-                _logger.LogInformation("Manipulating action result...");
+                // Manipulating action result...
                 context.Result = Helpers.GetContentResult(context.Result, "FIRST: ");
             }
         }
-
     }
 }

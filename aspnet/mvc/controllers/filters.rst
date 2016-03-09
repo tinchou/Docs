@@ -14,7 +14,7 @@ By `Steve Smith`_
 How do filters work?
 --------------------
 
-Each kind of filter will be executed at a different stage in the pipeline, and thus has its own set of intended scenarios. Choose what kind of filter to create based on the task you need it to perform, and where in the request pipeline it executes. Filters run within the MVC Action Invocation Pipeline, sometimes referred to as the *Filter Pipeline*, which runs after MVC selects the action to to execute.
+Each kind of filter will be executed at a different stage in the pipeline, and thus has its own set of intended scenarios. Choose what kind of filter to create based on the task you need it to perform, and where in the request pipeline it executes. Filters run within the MVC Action Invocation Pipeline, sometimes referred to as the *Filter Pipeline*, which runs after MVC selects the action to execute.
 
 .. image:: filters/_static/filter-pipeline-1.png
 
@@ -40,24 +40,47 @@ Implementation
 
 All filters support both synchronous and asynchronous implementations through different interface definitions. Choose the sync or async variant depending on the kind of task you need to perform. They are interchangeable from the framework's perspective.
 
-Synchonous filters define both an On*Stage*Executing and On*Stage*Executed method (with noted exceptions). The On*Stage*Executing method will be called before the event pipeline stage by the Stage name, and the On*Stage*Executed method will be called after the pipeline stage named by the Stage name.
+Synchonous filters define both an On\ *Stage*\ Executing and On\ *Stage*\ Executed method (with noted exceptions). The On\ *Stage*\ Executing method will be called before the event pipeline stage by the Stage name, and the On\ *Stage*\ Executed method will be called after the pipeline stage named by the Stage name.
 
-EXAMPLE
+.. literalinclude:: filters/sample/src/FiltersSample/Filters/SampleActionFilter.cs
+  :language: c#
+  :emphasize-lines: 6,8,13
 
-Asynchronous filters define a single On*Stage*ExecutionAsync method that will surround execution of the pipeline stage named by Stage. The On*Stage*ExecutionAsync method is provided a *Stage*ExecutionDelegate delegate which will execute the pipeline stage named by Stage when invoked and awaited.
+Asynchronous filters define a single On\ *Stage*\ ExecutionAsync method that will surround execution of the pipeline stage named by Stage. The On\ *Stage*\ ExecutionAsync method is provided a *Stage*\ ExecutionDelegate delegate which will execute the pipeline stage named by Stage when invoked and awaited.
 
-EXAMPLE
+.. literalinclude:: filters/sample/src/FiltersSample/Filters/SampleAsyncActionFilter.cs
+  :language: c#
+  :emphasize-lines: 6,8-9
 
-In most cases, you can implement both the async and synchronous interfaces at the same time, like so:
+In most cases, you can implement both the async and synchronous interfaces with the same class, like so:
 
-EXAMPLE
+.. literalinclude:: filters/sample/src/FiltersSample/Filters/SampleCombinedActionFilter.cs
+  :language: c#
+  :emphasize-lines: 11-12
 
 Filters and Attributes
 ^^^^^^^^^^^^^^^^^^^^^^
-It's often convenient to implement filter interfaces as *Attributes*. These attributes are then used to apply the filter to certain controllers or action methods.
+It's often convenient to implement filter interfaces as *Attributes*. These attributes are then used to apply the filter to certain controllers or action methods. The framework includes built-in attribute-based filters that you can subclass and customize. For example, the following filter inherits from `ResultFilterAttribute <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/Filters/ResultFilterAttribute/index.html>`_, and overrides its ``OnResultExecuting`` method to add a header to the response.
+
+.. literalinclude:: filters/sample/src/FiltersSample/Filters/AddHeaderAttribute.cs
+  :language: c#
+  :emphasize-lines: 5,16
+
+Attributes allow filters to accept arguments, as shown in the example above. You would add this attribute to a controller or action method and specify the name and value of the HTTP header you wished to be added to the response:
+
+.. literalinclude:: filters/sample/src/FiltersSample/Controllers/SampleController.cs
+  :language: c#
+  :emphasize-lines: 6
+
+The result is shown below - the response headers are displayed on the bottom right.
+
+.. image:: filters/_static/add-header.png
 
 Dependency Injection
 ^^^^^^^^^^^^^^^^^^^^
+Filters are not directly returned from :doc:`dependency injection </fundamentals/dependency-injection>` (DI). Filters that are also attributes, and which are added directly to controller classes or action methods cannot have constructor dependencies provided by DI - their constructor properties must be specified when they are declared. This is a limitation of how attributes work. However, if your filters have dependencies you need to access from DI, there are several supported approaches. You can apply your filter using either the ServiceFilter or TypeFilter attribute, or you can implement IFilterFactory on your attribute, or you can access the services you require from the context parameter provided to your filter's On\ *Stage* methods.
+
+
 
 
 Cancellation and Short Circuiting
