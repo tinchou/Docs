@@ -4,7 +4,7 @@ using Microsoft.AspNet.Mvc.Filters;
 
 namespace FiltersSample.Filters
 {
-    public class ShortCircuitingResourceFilter : Attribute,
+    public class ShortCircuitingResourceFilterAttribute : Attribute,
             IResourceFilter
     {
         public void OnResourceExecuting(ResourceExecutingContext context)

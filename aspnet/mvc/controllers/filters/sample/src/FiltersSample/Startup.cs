@@ -14,14 +14,12 @@ namespace FiltersSample
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-            services.AddScoped<LoggingAddHeaderAttribute>();
-
-            services.Configure<MvcOptions>(options =>
+            services.AddMvc(options =>
             {
-                options.Filters.Add(typeof(SampleGlobalActionFilter));
+                options.Filters.Add(new SampleGlobalActionFilter());
                 options.Filters.Add(typeof(DurationActionFilter));
             });
+            services.AddScoped<LoggingAddHeaderAttribute>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

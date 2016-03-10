@@ -6,6 +6,7 @@ namespace FiltersSample.Controllers
     [AddHeader("Author", "Steve Smith @ardalis")]
     public class SampleController : Controller
     {
+        [DurationActionFilter]
         public IActionResult Index()
         {
             return Content("Examine the headers using developer tools.");

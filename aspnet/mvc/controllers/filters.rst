@@ -104,11 +104,31 @@ When this filter is applied to an action that also would have an action filter a
 
 Configuring Filters
 -------------------
+Filters can be *scoped* at three different levels. You can add a particular filter to a particular action as an attribute. You can add a filter to all actions within a controller by applying an attribute at the controller level. Or you can register a filter globally, to be run with every MVC action.
+
+Filters are added globally in ``Startup``, when configuring MVC:
+
+.. literalinclude:: filters/sample/src/FiltersSample/Startup.cs
+  :language: c#
+  :emphasize-lines: 3-7
+  :lines: 15-23
+  :dedent: 8
+  :linenos:
+
+Filters can be added by type, or an instance can be added. If you add an instance, that instance will be used for every request. If you add a type, the instance will be created through DI, and any constructor dependencies will be populated by DI. In the example above, the :ref:`DurationActionFilter <duration-action-filter>` has a dependency on ``ILoggerFactory`` in its constructor, which is fulfilled by DI on each request.
+
+If you have a 
 How, Where, Ordering, Scope Filters are not directly returned from DI You can write an attribute that has the filter interface on it or you can implement an attribute that implements IFilterFactory or you can use TypeFilter attribute or ServiceFilter attribute TypeFilter: news it up and passes params to its constructor from DI ServiceFilter: gets your filter from ServiceCollection (thus must be registered with DI) If you're using IFilterFactory, you can specify lifetime of the filter When your filter is the instance, your filter instance is cached, so don't do anything stateful. GlobalFilters are registered through MvcOptions
  
-Scope
-^^^^^
+Ordering
+^^^^^^^^
 Filters can be applied per-action method (via attribute) or via controller (via attribute), or in global filters collection. Scope also generally determines ordering. The filter closest to the action runs first; generally you get overriding behavior without having to explicitly set ordering.
+
+Yes, filters can implement IOrderedFilter to manually provide an ordering. See the docs here https://github.com/aspnet/Mvc/blob/dev/src/Microsoft.AspNetCore.Mvc.Abstractions/Filters/IOrderedFilter.cs for a precise, yet verbose description.
+
+All of the built-in filters generally implement IOrderedFilter.
+
+Let me also showcase that Order is a stronger qualifier than scope. Filters are sorted first by order, and then scope is used to break ties.
 
 .. _authorization-filters:
 
@@ -135,6 +155,10 @@ As the `OnActionExecuting` method runs before the action method, it can manipula
 The `OnActionExecuted` method runs after the action method, and can see and manipulate the results of the action through the `ActionExecutedContext.Result` property. `ActionExecutedContext.Canceled` will be set to true if the action execution was short-circuited by another filter. `ActionExecutedContext.Exception` will be set to a non-null value if the action or a subsequent action filter threw an exception. Setting `ActionExecutedContext.Exception` to null effectively 'handles' an exception, and `ActionExectedContext.Result` will be executed as if it were returned from the action method normally.
 
 For an `IAsyncActionFilter` the `OnActionExecutionAsync` combines all the possibilites of `OnActionExecuting` and `OnActionExecuted`. A call to `await next()` on the `ActionExecutionDelegate` will execute any subsequent action filters and the action method, returning an `ActionExecutedContext`. To short-circuit inside of an `OnActionExecutionAsync`, set `ActionExecutingContext.Result` and do not call the `ActionExectionDelegate`.
+
+.. _duration-action-filter:
+
+SAMPLE
 
 .. _exception-filters:
 
