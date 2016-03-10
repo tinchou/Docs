@@ -5,7 +5,7 @@ By `Erik Reitan`_
 
 In this tutorial, you’ll create a simple web app using ASP.NET 5. The app stores data in a SQL database using Entity Framework (EF) and uses ASP.NET MVC to support the basic CRUD operations (create, read, update, delete).  
 
-.. contents:: In this article:
+.. contents:: Sections:
   :local:
   :depth: 1
 
@@ -165,25 +165,6 @@ In the **Solution Explorer** you'll see that the new controllers were added with
 
 .. image:: your-first-aspnet-application/_static/15e-updated-solution-explorer.png
 
-Configure the web app before including sample data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Next, you'll add the ``Microsoft.Extensions.DependencyInjection`` package to your app. 
-In **Solution Explorer** find and open *project.json*. In the ``dependencies`` section, begin by typing the following line at the end of the section. 
-
-.. image:: your-first-aspnet-application/_static/15d2-di-intellisense.png
-	
-You will see that IntelliSense provides coding help as you type. Also, when you save *project.json*, Visual Studio will automaticaly resolve the new package reference.
-
-.. image:: your-first-aspnet-application/_static/15d3-package-restore.png
-	
-After the above line has been added, the ``dependencies`` section of your *project.json* file will appear as follows:
-
-.. literalinclude:: your-first-aspnet-application/sample/src/ContosoBooks/project.json
-    :language: json
-    :lines: 8-29
-    :emphasize-lines: 21
-
 Add sample data
 ^^^^^^^^^^^^^^^
 
@@ -201,13 +182,7 @@ Next, in **Solution Explorer**, open the *Startup.cs* file. Add the following li
     :lines: 101
     :dedent: 12
 
-After the above line has been added, the completed *Startup.cs* file will appear as follows:
-
-.. literalinclude:: your-first-aspnet-application/sample/src/ContosoBooks/Startup.cs
-    :language: c#
-    :emphasize-lines: 101
-
-Notice in *ConfigureServices* the app calls ``Configuration["Data:DefaultConnection:ConnectionString"]`` to get the database connection string. During development, this setting comes from the *appsettings.json* file. When you deploy the app to a production environment, you set the connection string in an environment variable on the host. If the Configuration API finds an environment variable with the same key, it returns the environment variable instead of the value that is in *appsettings.json*.
+Notice in *ConfigureServices* the app calls ``Configuration["Data:DefaultConnection:ConnectionString"]`` to get the database connection string. During development, this setting comes from the *appsettings.json* file. When you deploy the app to a production environment, you set the connection string in an environment variable on the host. If the :doc:`Configuration </fundamentals/configuration>` API finds an environment variable with the same key, it returns the environment variable instead of the value that is in *appsettings.json*.
 	
 Build the web application
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -246,17 +221,15 @@ Run each of the following commands from the **Command Prompt**:
 	dnx ef migrations add Initial
 	dnx ef database update
 
-.. note:: If ``dnu restore`` is not a recognized command, you may have missed a prerequisite step (or part of a prerequisites step) at the beginning of this topic. However, first check if the **Active** version of the .NET Version Manager (dnvm) is checked. To do this, enter ``dnvm list`` in the command window. If there is no ***** next to any of the versions, set the active version by entering ``dnvm use 1.0.0-rc1-update1 -p``, so that the appropriate version is selected.
+.. note:: If ``dnu restore`` is not a recognized command, you may have missed a prerequisite step (or part of a prerequisites step) at the beginning of this topic. See :ref:`install-dnvm-windows` and :ref:`install-dnx-windows`.
 	
-The .NET Version Manager (**dnvm**) is a set of command line utilities that are used to update and configure .NET Runtime. 
-
-`DNX <http://docs.asp.net/en/latest/dnx/overview.html>`_ stands for the .NET Execution Environment. The ``ef`` command is specificed in the *project.json* file of your project. For more information about ``dnvm``, ``dnu``, and ``dnx``, see `DNX Overview <http://docs.asp.net/en/latest/dnx/overview.html>`_.
+Running ``dnu restore`` will restore the package dependencies specified in your **project.json** file. The ``ef`` command is specificed in the *project.json* file of your project. For more information about ``dnvm``, ``dnu``, and ``dnx``, see :doc:`/dnx/overview`.
 
 The "``add Initial``" command creates a migration named "Initial" that adds code to the project, allowing EF to update the database schema. The ``update`` command creates the actual database. After you run this command, the *Migrations* folder of your project will be updated as follows:
 
 .. image:: your-first-aspnet-application/_static/16-migrations.png
 
-.. note:: For general EF command help, enter the following in the command window: ``dnx ef -?``. For help with the ``add`` command, enter the following in the command window: ``dnx ef migrations add -?``. And, for help with the ``update`` command, enter the following in the command window: ``dnx ef database update -?``.
+.. note:: For general EF command help, enter the following in the command window: ``dnx ef -?``.
 
 Also, you will be able to view the newly created database within **SQL Server Object Explorer**. 
 
@@ -325,7 +298,7 @@ On the **Connection** tab of the **Publish Web** window, click **Publish**.
 
 	.. image:: your-first-aspnet-application/_static/24-vs-publishwebdb-target.png
 	
-You can view the publishing progress in eith the **Output** window or the **Azure App Service Activity** window within Visual Studio.
+You can view the publishing progress in either the **Output** window or the **Azure App Service Activity** window within Visual Studio.
 
 	.. image:: your-first-aspnet-application/_static/25-vs-webpubactivity.png
 	
@@ -333,10 +306,10 @@ When publishing to Azure is complete, your web app will be displayed in a browse
 
 	.. image:: your-first-aspnet-application/_static/26-browserazure.png
 
-For additional publishing information, see `Publishing and Deployment <http://docs.asp.net/en/latest/publishing/>`_.
+For additional publishing information, see :doc:`/publishing/index`.
 
 Additional Resources
 --------------------
-- `Introduction to ASP.NET 5 <http://docs.asp.net/en/latest/conceptual-overview/aspnet.html>`_
-- `Understanding ASP.NET 5 Web Apps <http://docs.asp.net/en/latest/conceptual-overview/understanding-aspnet5-apps.html>`_
-- `ASP.NET 5 Fundamentals <https://docs.asp.net/en/latest/fundamentals/index.html>`_
+- :doc:`/conceptual-overview/aspnet`
+- :doc:`/conceptual-overview/understanding-aspnet5-apps`
+- :doc:`/fundamentals/index`
