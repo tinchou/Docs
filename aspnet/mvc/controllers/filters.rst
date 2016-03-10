@@ -86,6 +86,11 @@ Dependency Injection
 ^^^^^^^^^^^^^^^^^^^^
 Filters are not directly returned from :doc:`dependency injection </fundamentals/dependency-injection>` (DI). Filters that are also attributes, and which are added directly to controller classes or action methods cannot have constructor dependencies provided by DI - their constructor properties must be specified when they are declared. This is a limitation of how attributes work. However, if your filters have dependencies you need to access from DI, there are several supported approaches. You can apply your filter using either the `ServiceFilter <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/ServiceFilterAttribute/index.html>`_ or `TypeFilter <https://docs.asp.net/projects/api/en/latest/autoapi/Microsoft/AspNet/Mvc/TypeFilterAttribute/index.html>`_ attribute, or you can implement IFilterFactory on your attribute, or you can access the services you require from the context parameter provided to your filter's On\ *Stage* methods.
 
+For an example of this last technique, consider the following method, which needs to access a service that has been registered with DI. The service is accessible from the context parameter:
+
+
+(also consider this idea http://pastebin.com/0fddQEZY)
+
 Cancellation and Short Circuiting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can short-circuit the filter pipeline at any point by setting the ``Result`` property on the context parameter provided to the filter method. For instance, the following ``ShortCircuitingResourceFilter`` will prevent any other filters from running later in the pipeline, including any action filters.
@@ -117,7 +122,7 @@ Filters are added globally in ``Startup``, when configuring MVC:
 
 Filters can be added by type, or an instance can be added. If you add an instance, that instance will be used for every request. If you add a type, the instance will be created through DI, and any constructor dependencies will be populated by DI. In the example above, the :ref:`DurationActionFilter <duration-action-filter>` has a dependency on ``ILoggerFactory`` in its constructor, which is fulfilled by DI on each request.
 
-If you have a 
+If you have a filter you don't want to be scoped globally, which requires dependencies to be provided through DI, you can apply it at the constructor or action level using the ``ServiceFilter`` or ``TypeFilter`` attribute. ``ServiceFilter`` 
 How, Where, Ordering, Scope Filters are not directly returned from DI You can write an attribute that has the filter interface on it or you can implement an attribute that implements IFilterFactory or you can use TypeFilter attribute or ServiceFilter attribute TypeFilter: news it up and passes params to its constructor from DI ServiceFilter: gets your filter from ServiceCollection (thus must be registered with DI) If you're using IFilterFactory, you can specify lifetime of the filter When your filter is the instance, your filter instance is cached, so don't do anything stateful. GlobalFilters are registered through MvcOptions
  
 Ordering
