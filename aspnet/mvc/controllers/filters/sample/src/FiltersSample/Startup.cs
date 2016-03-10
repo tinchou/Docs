@@ -1,8 +1,6 @@
 ﻿using FiltersSample.Filters;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -18,8 +16,9 @@ namespace FiltersSample
             {
                 options.Filters.Add(new SampleGlobalActionFilter());
                 options.Filters.Add(typeof(DurationActionFilter));
+                options.Filters.Add(new OrderLoggingActionFilterAttribute() {Name = "Global"});
             });
-            services.AddScoped<LoggingAddHeaderAttribute>();
+            services.AddScoped<LoggingAddHeaderFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

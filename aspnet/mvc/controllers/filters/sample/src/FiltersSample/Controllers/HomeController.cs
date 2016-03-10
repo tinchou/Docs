@@ -16,7 +16,7 @@ namespace FiltersSample.Controllers
             _logger = loggerFactory.CreateLogger<HomeController>();
         }
 
-        [ServiceFilter(typeof(LoggingAddHeaderAttribute))]
+        [ServiceFilter(typeof(LoggingAddHeaderFilter))]
         public IActionResult Index()
         {
             _logger.LogInformation(nameof(Index));
@@ -29,6 +29,16 @@ namespace FiltersSample.Controllers
             _logger.LogInformation(nameof(Hello));
             return Content($"Hello {name}");
         }
+
+        [TypeFilter(typeof(AddHeaderAttribute), 
+            Arguments =new object[] { "Author", "Steve Smith (@ardalis)"})]
+        public IActionResult Hi(string name)
+        {
+            _logger.LogInformation(nameof(Hi));
+            return Content($"Hi {name}");
+        }
+
+        [TypeFilter(typeof(DurationActionFilter))]
         public IActionResult RandomTime()
         {
             _logger.LogInformation(nameof(RandomTime));

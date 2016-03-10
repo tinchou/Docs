@@ -1,12 +1,13 @@
-﻿using FiltersSample.Interfaces;
+﻿using System.Threading;
+using FiltersSample.Interfaces;
 
 namespace FiltersSample.Services
 {
-    public class KnownAuthorService :IKnownAuthorService
+    public class DelayService :IDelayService
     {
-        public bool IsKnownAuthor(string name)
+        public void Delay()
         {
-            return name == "Steve";
+            Thread.Sleep(500);
         }
     }
 }

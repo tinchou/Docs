@@ -16,5 +16,11 @@ namespace FiltersSample.Controllers
         {
             return Content("Successful access to resource - header should be set.");
         }
+
+        [AddHeaderWithFactory]
+        public IActionResult HeaderWithFactory()
+        {
+            return Content("Examine the headers using developer tools.");
+        }
     }
 }

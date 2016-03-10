@@ -6,29 +6,27 @@ namespace FiltersSample.Filters
     /// <summary>
     /// https://github.com/aspnet/Mvc/blob/master/test/WebSites/FiltersWebSite/Filters/AddHeaderAttribute.cs
     /// </summary>
-    public class LoggingAddHeaderAttribute : ResultFilterAttribute
+    public class LoggingAddHeaderFilter : IResultFilter
     {
         private ILogger _logger;
-        public LoggingAddHeaderAttribute(ILoggerFactory loggerFactory)
+        public LoggingAddHeaderFilter(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<LoggingAddHeaderAttribute>();
+            _logger = loggerFactory.CreateLogger<LoggingAddHeaderFilter>();
         }
 
-        public override void OnResultExecuting(ResultExecutingContext context)
+        public void OnResultExecuting(ResultExecutingContext context)
         {
             _logger.LogWarning(nameof(OnResultExecuting));
             context.HttpContext.Response.Headers.Add(
                 "OnResultExecuting", new string[] { "ResultExecutingSuccessfully" });
-            base.OnResultExecuting(context);
         }
 
-        public override void OnResultExecuted(ResultExecutedContext context)
+        public void OnResultExecuted(ResultExecutedContext context)
         {
             _logger.LogWarning(nameof(OnResultExecuted));
             context.HttpContext.Response.Headers.Add(
                 "OnResultExecuted", new string[] { "ResultExecutedSuccessfully" });
 
-            base.OnResultExecuted(context);
         }
     }
 }
