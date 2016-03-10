@@ -75,7 +75,9 @@ Visual Studio creates some initial folders and files for your project. The prima
 
    * - HomeController.cs     
      - This ``controller`` contains the classes that handle incoming browser requests, retrieve model data, and then specify view templates that return a response to the browser. 
-	 
+
+In addition to these files the project is also setup to handle authenticating  users. To learn more about authentication and identity in ASP.NET 5 see :doc:`/security/authentication/index`. For a more complete overview of the structure of an ASP.NET 5 project see :doc:`/conceptual-overview/understanding-aspnet5-apps`. For this tutorial we will focus on adding functionality to our app using MVC and EF.
+
 Understanding MVC
 ^^^^^^^^^^^^^^^^^
 This project uses :doc:`MVC </mvc/index>`. MVC stands for Model-View-Controller. MVC is a pattern for developing applications that are well architected, testable, and easy to maintain. MVC-based applications contain:
